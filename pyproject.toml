@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "gd-connect"
+version = "0.1.0"
+description = "Python module & CLI to connect Google Drive for read/write operations"
+readme = "README.md"
+requires-python = ">=3.7"
+license = { text = "MIT" }
+authors = [
+    { name = "Your Name", email = "you@example.com" }
+]
+keywords = ["google-drive", "cli", "python", "automation", "storage"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+    "License :: OSI Approved :: MIT License",
+    "Topic :: Utilities",
+    "Topic :: Internet",
+]
+
+dependencies = [
+    "google-auth>=2.0.0",
+    "google-auth-oauthlib>=0.4.6",
+    "google-auth-httplib2>=0.1.0",
+    "google-api-python-client>=2.0.0",
+    "tqdm>=4.60.0",
+]
+
+[project.scripts]
+gd-connect = "gd_connect.cli:main"
