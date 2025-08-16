@@ -21,7 +21,7 @@ so you can **list, upload, download, and delete files** directly from Python or 
 ```bash
 git clone https://github.com/nitesh-mhatre/gd-connect.git
 cd gd-connect
-pip install -e .
+pip install -e . ```
 
 
 ======================================================
