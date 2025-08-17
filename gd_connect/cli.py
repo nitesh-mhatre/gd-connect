@@ -69,10 +69,13 @@ Tips:
 
     isd = sub.add_parser("is-dir", help="Check if a path is a folder")
     isd.add_argument("path", help="Path to check")
+    
+    search_parser = sub.add_parser("search", help="Search files in Google Drive")
+    search_parser.add_argument("--name", help="Search by file/folder name")
+    search_parser.add_argument("--mimeType", help="Search by MIME type (e.g. application/pdf)")
+    search_parser.add_argument("--modified-after", help="Search files modified after YYYY-MM-DD")
+    search_parser.add_argument("--modified-before", help="Search files modified before YYYY-MM-DD")
 
-    sea = sub.add_parser("search", help="Search by name within a folder (default: cwd)")
-    sea.add_argument("query", help="Name contains...")
-    sea.add_argument("path", nargs="?", help="Folder to search in (default: cwd)")
 
     return parser
 
@@ -125,11 +128,19 @@ def main():
             print("📁 Folder" if d.is_dir(args.path) else "📄 File or missing")
 
         elif args.cmd == "search":
-            items = d.search(args.query, args.path)
-            if not items:
-                print("🔍 No matches")
-            else:
-                print_list(items)
+          files = d.search(
+              name=args.name,
+              mimeType=args.mimeType,
+              modified_after=args.modified_after,
+              modified_before=args.modified_before,
+          )
+          if not files:
+              print("❌ No files found.")
+          else:
+              for f in files:
+                  icon = "📁" if f["mimeType"] == "application/vnd.google-apps.folder" else "📄"
+                  print(f"{icon} {f['name']} (id={f['id']}, modified={f['modifiedTime']})")
+  
 
     except FileNotFoundError as e:
         print(str(e))

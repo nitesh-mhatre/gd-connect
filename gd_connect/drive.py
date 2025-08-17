@@ -3,6 +3,7 @@ import json
 import os
 import posixpath
 from typing import List, Dict, Optional
+from datetime import datetime
 
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
@@ -276,3 +277,28 @@ class GoogleDrive:
             fileId=src_id, body=body, fields="id,name,parents"
         ).execute()
         return created
+
+    def search(self, name=None, mimeType=None, modified_after=None, modified_before=None):
+        """Search files by name, mimeType, and modifiedTime."""
+        query_parts = []
+
+        if name:
+            query_parts.append(f"name contains '{name}'")
+        if mimeType:
+            query_parts.append(f"mimeType='{mimeType}'")
+        if modified_after:
+            dt = datetime.strptime(modified_after, "%Y-%m-%d").isoformat() + "Z"
+            query_parts.append(f"modifiedTime > '{dt}'")
+        if modified_before:
+            dt = datetime.strptime(modified_before, "%Y-%m-%d").isoformat() + "Z"
+            query_parts.append(f"modifiedTime < '{dt}'")
+
+        query = " and ".join(query_parts) if query_parts else None
+
+        results = self.service.files().list(
+            q=query,
+            fields="files(id, name, mimeType, modifiedTime, size)",
+            spaces="drive"
+        ).execute()
+
+        return results.get("files", [])
